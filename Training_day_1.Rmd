@@ -1,0 +1,157 @@
+---
+title: "R Notebook"
+author: "Eduardo Rojo"
+date: "May 4th, 2023"
+output:
+  html_document:
+    df_print: paged
+    toc: true
+    toc_depth: 4
+    toc_float: true
+---
+
+# This is the header of the document {#markdown-header}
+\
+\
+\
+```{r download-data, echo = FALSE, include = FALSE, message = FALSE, warning = FALSE}
+#### First plot
+dir.create("data")
+download.file(url="https://raw.githubusercontent.com/cambiotraining/reproducibility-training/master/data/gapminder_data.csv", destfile="data/gapminder_data.csv")
+```
+
+```{r load-library, message = FALSE, warning = FALSE, echo = FALSE}
+#load tidyverse library
+library(tidyverse) # used for data manipulation
+library(rmarkdown) # used for paged_table function
+library(kableExtra) # used for table
+library(ggpubr) #used for ggarrange function 
+
+#read file into R
+pop_data <- read_csv("data/gapminder_data.csv")
+
+#create a table with data from European countries in 2007 showing the countries 
+#with the largest life expectancy at the top 
+euro_data_tbl <- pop_data %>% 
+                    filter(continent == "Europe" & year == 2007) %>% 
+                    select(-continent, -year) %>% 
+                    arrange(desc(lifeExp)) %>% 
+                    rename(Country = country, 
+                           "Population Size" = pop, 
+                           "Life Expectancy" = lifeExp, 
+                           "GDP" = gdpPercap)
+    
+kbl(euro_data_tbl) %>%
+          kable_styling(bootstrap_options = c("striped", "hover"))
+
+```
+
+```{r paged-table}
+paged_table(euro_data_tbl)
+
+```
+
+
+Next, the life expectancy in Europe is observed across different years.  The aim of this is to check if there was a change in life expectancy over the years.  The data used for the life expectancy over the years analysis is the gapminder data and the following data manipulation was performed:
+
+```{r fig-data}
+#keep on European data and change year to factor
+euro_data_fig <- pop_data %>% 
+                    filter(continent == "Europe")  %>% 
+                    mutate(year=as_factor(year))
+
+```
+
+The life expectancy for Europe over the years is plotted as following:
+
+```{r fig, warning=FALSE, fig.cap="Life Expectancy in Europe over the years"}
+#Euro plot
+euro_plot <- euro_data_fig %>%
+                ggplot(mapping=aes(x=year, y=lifeExp)) +
+                geom_violin() +
+                stat_summary(fun.y = median)
+
+#draw euro plot
+euro_plot
+
+```
+
+
+Comparison of life expectancy from Europe and United Kingdom:
+```{r fig-comp, warning=FALSE, fig.cap="Life Expectancy in European and UK over the years"}
+#keep only United Kingdom data and change year to factor
+uk_data_fig <- pop_data %>%
+                    filter(country == "United Kingdom") %>%
+                    mutate(year=as_factor(year))
+
+#UK plot
+uk_plot <- uk_data_fig %>%
+                ggplot(mapping=aes(x=year, y=lifeExp)) +
+                geom_point()
+
+#draw euro plot next to UK plot
+ggarrange(euro_plot, uk_plot, ncol=2, nrow=1, labels=c("A","B"))
+```
+
+
+### Lists
+#### Indexed lists
+1. Item 1
+2. Item 2
+3. Item 3
+
+#### Indexed lists with spacing
+1. Item 1
+2. Item 2
+3. Item 3
+    a. Item 3a
+        i.  Item 3ai
+        ii. Item 3aii
+    b. Item 3b
+    c. Item 3c
+4. Item 4
+
+#### Lists with vignettes
+* Item 1
+* Item 2
+* Item 3
+    * Item 3a
+        *  Item 3ai
+        * Item 3aii
+    * Item 3b
+    * Item 3c
+* Item 4
+
+#### To-do lists
+- [ ] an unchecked task list item
+- [x] checked item
+
+
+### Tables
+
+1. My first table
+
+| Column 1    | Column 2    | Column 3    |
+| ----------- | ----------- | ----------- |
+| Item 1,1    | Item 1,2    | Item 4,5    |
+| Item 2,1    | Item 2,2    | Item 5,6    |
+
+
+2. My first centered table
+
+| Column 1    | Column 2    | Column 3    |
+|    :----:   |    :----:   |    :----:   |
+| Item 1,1    | Item 1,2    | Item 1,3    |
+| Item 2,1    | Item 2,2    | Item 2,3    |
+
+
+### Blocks
+> Testing the block with a "quote"
+
+
+[Go to header](#markdown-header) \
+\
+\
+[Go to training website](https://cambiotraining.github.io/reproducibility-training/rmarkdown.html)
+[kable styling](https://cran.r-project.org/web/packages/kableExtra/vignettes/awesome_table_in_html.html#Table_Styles)
+[Examples of R notebooks: rpubs](https://rpubs.com/)
