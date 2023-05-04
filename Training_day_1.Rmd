@@ -155,3 +155,6 @@ ggarrange(euro_plot, uk_plot, ncol=2, nrow=1, labels=c("A","B"))
 [Go to training website](https://cambiotraining.github.io/reproducibility-training/rmarkdown.html)
 [kable styling](https://cran.r-project.org/web/packages/kableExtra/vignettes/awesome_table_in_html.html#Table_Styles)
 [Examples of R notebooks: rpubs](https://rpubs.com/)
+
+
+Testing GitHub update/push/pull capabilities
